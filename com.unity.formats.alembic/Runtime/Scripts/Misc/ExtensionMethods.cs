@@ -26,7 +26,7 @@ namespace UnityEngine.Formats.Alembic.Importer
 
         public static unsafe IntPtr GetUnsafePointer<T>(this ref NativeArray<T> src) where T : struct
         {
-            return src.IsCreated ? (IntPtr)src.GetUnsafePtr() : new IntPtr();
+            return src.IsCreated && src.Length>0 ? (IntPtr)src.GetUnsafePtr() : new IntPtr(); // 0 size arrays are considered unallocated
         }
     }
 }

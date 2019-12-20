@@ -209,27 +209,6 @@ namespace UnityEngine.Formats.Alembic.Sdk
 
         public Vector3 center;
         public Vector3 extents;
-
-        public aiPolyMeshData(
-            IntPtr positions, IntPtr velocities, IntPtr normals,
-            IntPtr tangents, IntPtr uv0, IntPtr uv1, IntPtr rgba,
-            IntPtr rgb, IntPtr indices, int vertexCount, int indexCount,
-            Vector3 center, Vector3 extents)
-        {
-            this.positions = positions;
-            this.velocities = velocities;
-            this.normals = normals;
-            this.tangents = tangents;
-            this.uv0 = uv0;
-            this.uv1 = uv1;
-            this.rgba = rgba;
-            this.rgb = rgb;
-            this.indices = indices;
-            this.vertexCount = vertexCount;
-            this.indexCount = indexCount;
-            this.center = center;
-            this.extents = extents;
-        }
     }
 
     struct aiSubmeshData

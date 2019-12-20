@@ -24,32 +24,29 @@ namespace UnityEngine.Formats.Alembic.Importer
 
         internal class Split : IDisposable
         {
-            public PinnedList<Vector3> points = new PinnedList<Vector3>();
-            public PinnedList<Vector3> velocities = new PinnedList<Vector3>();
-            public PinnedList<Vector3> normals = new PinnedList<Vector3>();
-            public PinnedList<Vector4> tangents = new PinnedList<Vector4>();
-            public PinnedList<Vector2> uv0 = new PinnedList<Vector2>();
-            public PinnedList<Vector2> uv1 = new PinnedList<Vector2>();
-            public PinnedList<Color> rgba = new PinnedList<Color>();
-            public PinnedList<Color> rgb = new PinnedList<Color>();
+            public NativeArray<Vector3> points;
+            public NativeArray<Vector3> velocities;
+            public NativeArray<Vector3> normals;
+            public NativeArray<Vector4> tangents;
+            public NativeArray<Vector2> uv0;
+            public NativeArray<Vector2> uv1;
+            public NativeArray<Color> rgba;
+            public NativeArray<Color> rgb;
 
             public Mesh mesh;
             public GameObject host;
             public bool active = true;
 
-            public Vector3 center = Vector3.zero;
-            public Vector3 size = Vector3.zero;
-
             public void Dispose()
             {
-                if (points != null) points.Dispose();
-                if (velocities != null) velocities.Dispose();
-                if (normals != null) normals.Dispose();
-                if (tangents != null) tangents.Dispose();
-                if (uv0 != null) uv0.Dispose();
-                if (uv1 != null) uv1.Dispose();
-                if (rgba != null) rgba.Dispose();
-                if (rgb != null) rgb.Dispose();
+                points.DisposeIfNeeded();
+                velocities.DisposeIfNeeded();
+                normals.DisposeIfNeeded();
+                tangents.DisposeIfNeeded();
+                uv0.DisposeIfNeeded();
+                uv1.DisposeIfNeeded();
+                rgba.DisposeIfNeeded();
+                rgb.DisposeIfNeeded();
                 if ((mesh.hideFlags & HideFlags.DontSave) != 0)
                 {
 #if UNITY_EDITOR
@@ -171,53 +168,53 @@ namespace UnityEngine.Formats.Alembic.Importer
                 int vertexCount = m_splitSummaries[spi].vertexCount;
 
                 if (!m_summary.constantPoints || topologyChanged)
-                    split.points.ResizeDiscard(vertexCount);
+                    split.points.ResizeIfNeeded(vertexCount);
                 else
-                    split.points.ResizeDiscard(0);
-                vertexData.positions = split.points;
+                    split.points.ResizeIfNeeded(0);
+                vertexData.positions = split.points.GetUnsafePointer();
 
                 if (m_summary.hasVelocities && (!m_summary.constantVelocities || topologyChanged))
-                    split.velocities.ResizeDiscard(vertexCount);
+                    split.velocities.ResizeIfNeeded(vertexCount);
                 else
-                    split.velocities.ResizeDiscard(0);
-                vertexData.velocities = split.velocities;
+                    split.velocities.ResizeIfNeeded(0);
+                vertexData.velocities = split.velocities.GetUnsafePointer();
 
                 if (m_summary.hasNormals && (!m_summary.constantNormals || topologyChanged))
-                    split.normals.ResizeDiscard(vertexCount);
+                    split.normals.ResizeIfNeeded(vertexCount);
                 else
-                    split.normals.ResizeDiscard(0);
-                vertexData.normals = split.normals;
+                    split.normals.ResizeIfNeeded(0);
+                vertexData.normals = split.normals.GetUnsafePointer();
 
                 if (m_summary.hasTangents && (!m_summary.constantTangents || topologyChanged))
-                    split.tangents.ResizeDiscard(vertexCount);
+                    split.tangents.ResizeIfNeeded(vertexCount);
                 else
-                    split.tangents.ResizeDiscard(0);
-                vertexData.tangents = split.tangents;
+                    split.tangents.ResizeIfNeeded(0);
+                vertexData.tangents = split.tangents.GetUnsafePointer();
 
                 if (m_summary.hasUV0 && (!m_summary.constantUV0 || topologyChanged))
-                    split.uv0.ResizeDiscard(vertexCount);
+                    split.uv0.ResizeIfNeeded(vertexCount);
                 else
-                    split.uv0.ResizeDiscard(0);
-                vertexData.uv0 = split.uv0;
+                    split.uv0.ResizeIfNeeded(0);
+                vertexData.uv0 = split.uv0.GetUnsafePointer();
 
                 if (m_summary.hasUV1 && (!m_summary.constantUV1 || topologyChanged))
-                    split.uv1.ResizeDiscard(vertexCount);
+                    split.uv1.ResizeIfNeeded(vertexCount);
                 else
-                    split.uv1.ResizeDiscard(0);
-                vertexData.uv1 = split.uv1;
+                    split.uv1.ResizeIfNeeded(0);
+                vertexData.uv1 = split.uv1.GetUnsafePointer();
 
                 if (m_summary.hasRgba && (!m_summary.constantRgba || topologyChanged))
-                    split.rgba.ResizeDiscard(vertexCount);
+                    split.rgba.ResizeIfNeeded(vertexCount);
                 else
-                    split.rgba.ResizeDiscard(0);
-                vertexData.rgba = split.rgba;
+                    split.rgba.ResizeIfNeeded(0);
+                vertexData.rgba = split.rgba.GetUnsafePointer();
 
                 if (m_summary.hasRgb && (!m_summary.constantRgb || topologyChanged)) {
-                    split.rgb.ResizeDiscard(vertexCount);
+                    split.rgb.ResizeIfNeeded(vertexCount);
                 } else {
-                    split.rgb.ResizeDiscard(0);
+                    split.rgb.ResizeIfNeeded(0);
                 }
-                vertexData.rgb = split.rgb;
+                vertexData.rgb = split.rgb.GetUnsafePointer();
 
                 m_splitData[spi] = vertexData;
             }
@@ -328,29 +325,24 @@ namespace UnityEngine.Formats.Alembic.Importer
                         split.mesh.subMeshCount = m_splitSummaries[s].submeshCount;
                     }
 
-                    if (split.points.Count > 0)
-                        split.mesh.SetVertices(split.points.List);
-                    if (split.normals.Count > 0)
-                        split.mesh.SetNormals(split.normals.List);
-                    if (split.tangents.Count > 0)
-                        split.mesh.SetTangents(split.tangents.List);
-                    if (split.uv0.Count > 0)
-                        split.mesh.SetUVs(0, split.uv0.List);
-                    if (split.uv1.Count > 0)
-                        split.mesh.SetUVs(1, split.uv1.List);
-                    if (split.velocities.Count > 0)
-                    {
-#if UNITY_2019_2_OR_NEWER
-                        split.mesh.SetUVs(5, split.velocities.List);
-#else
-                        split.mesh.SetUVs(3, split.velocities.List);
-#endif
-                    }
+                    if (split.points.Length > 0)
+                        split.mesh.SetVertices(split.points);
+                    if (split.normals.Length > 0)
+                        split.mesh.SetNormals(split.normals);
+                    if (split.tangents.Length > 0)
+                        split.mesh.SetTangents(split.tangents);
+                    if (split.uv0.Length > 0)
+                        split.mesh.SetUVs(0, split.uv0);
+                    if (split.uv1.Length > 0)
+                        split.mesh.SetUVs(1, split.uv1);
+                    if (split.velocities.Length > 0)
+                        split.mesh.SetUVs(5, split.velocities);
 
-                    if (split.rgba.Count > 0)
-                        split.mesh.SetColors(split.rgba.List);
-                    else if (split.rgb.Count > 0)
-                        split.mesh.SetColors(split.rgb.List);
+
+                    if (split.rgba.Length > 0)
+                        split.mesh.SetColors(split.rgba);
+                    else if (split.rgb.Length > 0)
+                        split.mesh.SetColors(split.rgb);
 
                     // update the bounds
                     var data = m_splitData[s];
@@ -380,7 +372,7 @@ namespace UnityEngine.Formats.Alembic.Importer
                     else if (sum.topology == aiTopology.Quads)
                         split.mesh.SetIndices(submesh.indexes.GetArray(), MeshTopology.Quads, sum.submeshIndex, false);
                 }
-           }
+            }
         }
 
         Mesh AddMeshComponents(GameObject go)
