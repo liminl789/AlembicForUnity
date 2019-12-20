@@ -148,42 +148,11 @@ namespace UnityEngine.Formats.Alembic.Importer
             int splitCount = m_sampleSummary.splitCount;
             int submeshCount = m_sampleSummary.submeshCount;
 
-            if (m_splitSummaries.Length != splitCount)
-            {
-                if (m_splitSummaries.IsCreated)
-                {
-                    m_splitSummaries.Dispose();
-                }
-                m_splitSummaries = new NativeArray<aiMeshSplitSummary>(splitCount,Allocator.Persistent);
-            }
+            m_splitSummaries.ResizeIfNeeded(splitCount);
+            m_splitData.ResizeIfNeeded(splitCount);
+            m_submeshSummaries.ResizeIfNeeded(submeshCount);
+            m_submeshData.ResizeIfNeeded(submeshCount);
 
-            if (m_splitData.Length != splitCount)
-            {
-                if (m_splitData.IsCreated)
-                {
-                    m_splitData.Dispose();
-                }
-                m_splitData = new NativeArray<aiPolyMeshData>(splitCount,Allocator.Persistent);
-            }
-
-            if (m_submeshSummaries.Length != submeshCount)
-            {
-                if (m_submeshSummaries.IsCreated)
-                {
-                    m_submeshSummaries.Dispose();
-                }
-                m_submeshSummaries = new NativeArray<aiSubmeshSummary>(submeshCount, Allocator.Persistent);
-            }
-
-            if (m_submeshData.Length != submeshCount)
-            {
-                if (m_submeshData.IsCreated)
-                {
-                    m_submeshData.Dispose();
-                }
-
-                m_submeshData = new NativeArray<aiSubmeshData>(submeshCount,Allocator.Persistent);
-            }
 
             sample.GetSplitSummaries(m_splitSummaries);
             sample.GetSubmeshSummaries(m_submeshSummaries);
