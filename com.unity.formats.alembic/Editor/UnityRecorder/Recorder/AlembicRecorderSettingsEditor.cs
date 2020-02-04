@@ -1,6 +1,8 @@
 #if RECORDER_AVAILABLE
 using UnityEditor.Formats.Alembic.Exporter;
 using UnityEditor.Recorder;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 namespace UnityEditor.Formats.Alembic.Recorder
 {
@@ -21,6 +23,7 @@ namespace UnityEditor.Formats.Alembic.Recorder
             if (dirty)
             {
                 EditorUtility.SetDirty(target);
+                EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
             }
         }
     }
