@@ -13,9 +13,15 @@ namespace UnityEditor.Formats.Alembic.Recorder
         {
             base.OnInspectorGUI();
             var t = target as AlembicRecorderSettings;
-            AlembicExporterEditor.DrawSettings(serializedObject,
+            var dirty = AlembicExporterEditor.DrawSettings(serializedObject,
                 t.Settings,
                 "settings.", ref m_foldCaptureComponents, ref m_foldMeshComponents, true);
+
+            serializedObject.ApplyModifiedProperties();
+            if (dirty)
+            {
+                EditorUtility.SetDirty(target);
+            }
         }
     }
 }
